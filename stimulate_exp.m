@@ -1,7 +1,7 @@
-function [ success ] = stimulate_exp(isi, random, trials, isInRandMode, songbird_directory, hObject, a)
+function [ success ] = stimulate_exp(isi, random, trials, isInRandMode, songbird_directory, ~, a)
 %% Stimulate the bird acoustically, send data via arduino to the intan board for duration of song.
 
-
+fprintf(strcat('Of', num2str(trials*numel(songs), ':\n')))
 songs = dir(fullfile(songbird_directory, '*.wav')); % should already be sorted by insertion
 
 % TODOS:   1 progress bar
@@ -13,7 +13,7 @@ if isInRandMode
     for elem = 1:str2num(trials)
         xi = randperm(numel(songs));
         shuffledsongs = songs(xi).name; % shuffle songs
-        for song = 1:numel(shuffledsongs)
+        for song = 1:numel(songs)
             playprot
             updatecount
         end
@@ -49,16 +49,11 @@ end
         pause(str2double(isi)+rand*str2double(random)) % isi plus or minus rand [0,1] times random
     end
 clear all
-disp done
+fprintf('\ndone')
 
 success = 1;
 return;
 end
-
-
-
-
-
 
 
 
