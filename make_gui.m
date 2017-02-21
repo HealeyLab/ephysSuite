@@ -2,7 +2,7 @@ function make_gui
     %% NOTE: to go fast, toggle the fields with the TAB key.
     % add components
     if ~exist('a', 'var') % if no a variable, instantiate it
-        a = arduino
+        a = arduino;
     end
     hs = addcomponents;
 
@@ -64,6 +64,17 @@ function make_gui
             'String','Run',...
             'Callback', @run,...
             'Tag', 'go');
+%         [from_left from_bottom width height]
+        hs.progressString = uicontrol(hs.fig,...
+            'Style', 'text',...
+            'Position',[175 25 425 20],...
+            'Tag', 'pS',...
+            'String','bobt');
+        hs.elapsedTimeString = uicontrol(hs.fig,...
+            'Style', 'text',...
+            'Position',[175 50 425 20],...
+            'Tag', 'elapsedTimeString',...
+            'String','Elapsed time');
     end
 
     function run(hObject, ~)
@@ -72,7 +83,8 @@ function make_gui
         trials = hs.trialEdit.String;
         isInRandMode = hs.randomOrNah.Value; % so default SHOULD BE random
         songbird_directory = hs.getSongDirectory.String;
-        stimulate_exp(isi, random, trials, isInRandMode, songbird_directory, hObject, a);     
+        GuiHandle = ancestor(hObject, 'figure');
+        stimulate_exp(isi, random, trials, isInRandMode, songbird_directory, GuiHandle, a);     
     end
 
     function changeToggleText(hObject, ~)

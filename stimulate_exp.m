@@ -1,15 +1,14 @@
-function [ success ] = stimulate_exp(isi, random, trials, isInRandMode, songbird_directory, ~, a)
+function [ success ] = stimulate_exp(isi, random, trials, isInRandMode, songbird_directory, GuiHandle, a)
+ps = findobj(GuiHandle, 'Tag', 'pS');
+ets = findobj(GuiHandle, 'Tag', 'elapsedTimeString');
 %% Stimulate the bird acoustically, send data via arduino to the intan board for duration of song.
 
-fprintf(strcat('Of', num2str(trials*numel(songs), ':\n')))
 songs = dir(fullfile(songbird_directory, '*.wav')); % should already be sorted by insertion
-
-% TODOS:   1 progress bar
-%          2 specific button stimulus design
-%          3 sorted songs; should be automatically sorted
+% fprintf(strcat('Of ', num2str(trials*numel(songs)))) % from previous
+% technique
 
 if isInRandMode
-    fprintf('\nTrials done:  ')
+%     fprintf('\nTrials done:  ')
     for elem = 1:str2num(trials)
         xi = randperm(numel(songs));
         shuffledsongs = songs(xi).name; % shuffle songs
@@ -27,12 +26,14 @@ else
     end
 end
     function updatecount
-        if song*elem > 1
-            for i = 1:log10((elem*song+elem-1)*10) % total number of times
-                fprintf('\b') % deletes relevant things
-            end
-        end
-        fprintf('%d', elem*song+elem)
+        set(ets, 'String', strcat('elapsed time: ', num2str(toc)));
+        set(ps, 'String', strcat('Of ', num2str(trials*numel(songs)), ' trials, trials done: ', num2str(elem*song+elem-1)));
+%         if song*elem > 1
+%             for i = 1:log10((elem*song+elem-1)*10) % total number of times
+%                 fprintf('\b') % deletes relevant things
+%             end
+%         end
+%         fprintf('%d', elem*song+elem)
     end
     function playprot
         %load file
@@ -41,12 +42,14 @@ end
         player = audioplayer(Y, Fs);
         %play
         a.writeDigitalPin('D6', 1) % Arduino on for duration of playback
+        tic
         playblocking(player) % so that it doesn't all play at once
         a.writeDigitalPin('D6', 0) % Once playback done, Arduino off
         %cleanup
         clear Y Fs player
         %pause
-        pause(str2double(isi)+rand*str2double(random)) % isi plus or minus rand [0,1] times random
+        pausetime = str2double(isi)+rand*str2double(random) - toc; % This fixes a bug where I didn't account for length of song
+        pause(pausetime) % isi plus or minus rand [0,1] times random
     end
 clear all
 fprintf('\ndone')
