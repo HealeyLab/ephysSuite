@@ -1,4 +1,10 @@
 function [ success ] = stimulate_exp(isi, random, trials, isInRandMode, songbird_directory, GuiHandle, a)
+if ~exist('path_to_intan_data_folder', 'var')
+    path_to_intan_data_folder = uigetdir('..'); % one level up
+    s = dir(fullfile(path_to_intan_data_folder, 'markers.txt'));
+end
+    
+
 ps = findobj(GuiHandle, 'Tag', 'pS');
 ets = findobj(GuiHandle, 'Tag', 'elapsedTimeString');
 %% Stimulate the bird acoustically, send data via arduino to the intan board for duration of song.

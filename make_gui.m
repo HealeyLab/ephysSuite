@@ -4,6 +4,8 @@ function make_gui
     if ~exist('a', 'var') % if no a variable, instantiate it
         a = arduino;
     end
+    
+    
     hs = addcomponents;
 
     function hs = addcomponents

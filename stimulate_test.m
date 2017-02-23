@@ -1,38 +1,58 @@
 function stimulate_test
 clear all
 %% Stimulate the bird acoustically, send data via arduino to the thing.
-% if ~exist('a', 'var') % if no a variable, instantiate it
-%     a = arduino
-% end
-%% TODOS:  1 specific button stimulus design
+if ~exist('a', 'var') % if no a variable, instantiate it
+    a = arduino;
+end
+%% TODOS:  
+% REGEX
+% 
+
+% connected to analog input 7, indicates start of recording, triggers it.
+a.writeDigitalPin('D5', 1);
 while 1
     in = input('which song?', 's');
     switch in
-        case 'b'
-            %             run bos
-            file = dir('C:\Users\Dell\Documents\MATLAB\Healey\zf son\*.wav');
-        case 'rb'
-            %             reverse bos
-            file = dir('C:\Users\Dell\Documents\MATLAB\Healey\zf son\*.wav');
-        case 't'
-            %             tutor song
-            file = dir('C:\Users\Dell\Documents\MATLAB\Healey\zf son\*.wav');
-        case 'rt'
-            %           reverse tutor song
-            file = dir('C:\Users\Dell\Documents\MATLAB\Healey\zf son\*.wav');
+        case 'b' % run bos
+            file = dir('C:\Users\Dell\Documents\MATLAB\Healey\zf son\* BOS*.wav');
+            dowrite
+            playprot
+        case 'rb' % reverse bos
+            file = dir('C:\Users\Dell\Documents\MATLAB\Healey\zf son\*REV-BOS*.wav');
+            dowrite
+            playprot
+        case 't' % tutor song
+            file = dir('C:\Users\Dell\Documents\MATLAB\Healey\zf son\* TUT*.wav');
+            dowrite
+            playprot
+        case 'rt' % reverse tutor song
+            file = dir('C:\Users\Dell\Documents\MATLAB\Healey\zf son\*REV-TUT*.wav');
+            dowrite
+            playprot
         case 'q'
+            a.writeDigitalPin('D5', 0); % stops recording
             break;
         otherwise
             disp huh?
             continue; % bring back to top of loop
     end
-    [Y, Fs]=audioread(file);
-    player = audioplayer(Y, Fs); %#ok<TNMLP> just to suppress warning
-    %     a.writeDigitalPin('D6', 1)
-    playblocking(player) % so that it doesn't all play at once
-    %     a.writeDigitalPin('D6', 0)
-    clear Y Fs player
 end
+    function dowrite
+        fid = fopen(file, 'w');
+        fprintf(fid, '%s', in);
+        fclose(fid);
+    end
+    function playprot
+        %load file
+        [Y, Fs]=audioread(file);
+        player = audioplayer(Y, Fs);
+        %play
+        a.writeDigitalPin('D6', 1) % Arduino on for duration of playback
+        playblocking(player) % so that it doesn't all play at once
+        a.writeDigitalPin('D6', 0) % Once playback done, Arduino off
+        %cleanup
+        clear Y Fs player
+    end
 
 disp done
 
