@@ -39,7 +39,7 @@ while 1
 end
     function dowrite
         fid = fopen(file, 'w');
-        fprintf(fid, '%s', in);
+        fprintf(fid, '%s\n', in);
         fclose(fid);
     end
     function playprot
