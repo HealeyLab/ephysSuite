@@ -6,10 +6,9 @@ if ~exist('a', 'var') % if no a variable, instantiate it
 end
 %% TODOS:  
 % REGEX
-% 
 
-% connected to analog input 7, indicates start of recording, triggers it.
-a.writeDigitalPin('D5', 1);
+a.writeDigitalPin('D5', 1);% connected to analog input 7, from arduino digital 5, indicates start of recording, triggers it.
+pause 1; % because intan likes to wait for one second.
 while 1
     in = input('which song?', 's');
     switch in
@@ -38,7 +37,8 @@ while 1
     end
 end
     function dowrite
-        fid = fopen(file, 'w');
+        textfile = fullfile(file.folder, strcat(file.name, '_markers.txt'));
+        fid = fopen(textfile, 'w');
         fprintf(fid, '%s', in);
         fclose(fid);
     end

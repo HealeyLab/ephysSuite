@@ -4,17 +4,17 @@ if ~exist('path_to_intan_data_folder', 'var')
     s = dir(fullfile(path_to_intan_data_folder, 'markers.txt'));
 end
     
-
+file;
 ps = findobj(GuiHandle, 'Tag', 'pS');
 ets = findobj(GuiHandle, 'Tag', 'elapsedTimeString');
 %% Stimulate the bird acoustically, send data via arduino to the intan board for duration of song.
 
 songs = dir(fullfile(songbird_directory, '*.wav')); % should already be sorted by insertion
-% fprintf(strcat('Of ', num2str(trials*numel(songs)))) % from previous
-% technique
+
+a.writeDigitalPin('D5', 1);% Intan analog input 7, digital 5, triggers.
+pause 1; % because intan likes to wait for one second latency.
 
 if isInRandMode
-%     fprintf('\nTrials done:  ')
     for elem = 1:str2num(trials)
         xi = randperm(numel(songs));
         shuffledsongs = songs(xi).name; % shuffle songs
@@ -42,20 +42,29 @@ end
 %         fprintf('%d', elem*song+elem)
     end
     function playprot
-        %load file
+        %% load file, set filename
         file=strcat(songs(song).folder, '/', songs(song).name);
         [Y, Fs]=audioread(file);
         player = audioplayer(Y, Fs);
-        %play
+        
+        %% play
         a.writeDigitalPin('D6', 1) % Arduino on for duration of playback
-        tic
+        tic % start counting
         playblocking(player) % so that it doesn't all play at once
         a.writeDigitalPin('D6', 0) % Once playback done, Arduino off
-        %cleanup
+        dowrite % note down in our textfile what stim that was
+        %% cleanup
         clear Y Fs player
-        %pause
+        
+        %% pause
         pausetime = str2double(isi)+rand*str2double(random) - toc; % This fixes a bug where I didn't account for length of song
         pause(pausetime) % isi plus or minus rand [0,1] times random
+    end
+    function dowrite
+        textfile = fullfile(file.folder, strcat(file.name, '_markers.txt'));
+        fid = fopen(textfile, 'w');
+        fprintf(fid, '%s', ##########);
+        fclose(fid);
     end
 clear all
 fprintf('\ndone')
