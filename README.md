@@ -1,22 +1,6 @@
 # ephysSuite
 A set of tools for the RHD2000 board, designed for easy and intuitive interrogation during extracelluar recording 
 
-### Wavemark notation:
-CON: 
-
-CON-REV: 
-
-HET: 
-
-BOS: 
-
-BOS-REV: 
-
-TUT: 
-
-TUT-REV: 
-
-
 <a href="#setup">setup</a>
 
 <a href="#export">data export</a>
@@ -37,6 +21,22 @@ TUT-REV:
  <h2>Analysis in Spike</h2>
  </a>
  
+### Wavemark notation:
+CON: 
+
+CON-REV: 
+
+HET: 
+
+BOS: 
+
+BOS-REV: 
+
+TUT: 
+
+TUT-REV: 
+
+
  
  <a name="matlab">
  <h2>Analysis in MATLAB</h2>
