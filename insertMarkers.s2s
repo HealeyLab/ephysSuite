@@ -1,0 +1,32 @@
+var spikefile%, textfile%, currentmarker$, ret%; '% means integer
+spikefile% := FileOpen("*.smr", 0, 0); 'name, type, mode
+
+textfile% := FileOpen("*_markers.txt", 1, 0);'text, read only 
+'get channel 9 ADC-07 data as array
+ret%:=MemChan(8, findsize);
+'findsize = length of recording * sr
+Func doTxtMrk(input$, time%)
+var cd%[4]; 'you need a code to be able to sort it later
+if input$ = "b" then cd%[0] := 1;'SampleText("bos", time%, cd%[]);
+endif
+if input$ = "t" then cd%[0] := 2;endif
+if input$ = "rb" then cd%[0] := 3;endif
+if input$ = "rt" then cd%[0] := 4;endif
+'          chan, defers to next param, time,  code,  textmark
+MemSetItem(ret%, 0,                    time%, cd%[], input$);
+end
+
+'MAIN CODE
+if (textfile% > 0) then
+    'reads next line from file, overwrites currentmarker$
+    while Read(currentmarker$) >= 0 do
+        doTxtMrk(currentmarker$, 30.5306);
+        'PrintLog("%s\n", toTxtMrk$(currentmarker$));
+    wend;
+    'close text file
+    FileClose(textfile%);
+endif
+
+'close spike file
+ChanShow(ret%); 'need to actually show channel
+FileClose(spikefile%);
