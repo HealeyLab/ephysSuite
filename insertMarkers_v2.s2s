@@ -10,7 +10,7 @@ textfile% := FileOpen("*_markers.txt", 1, 0);'text, read only
 if (textfile% > 0) then
     var currentmarker$, lastMarker% := 0;
     'reads next line from file, overwrites currentmarker$
-    'We will iteratively chanSearch from here.
+    'We will iteratively chanSearch from here.'
     while Read(currentmarker$) >= 0 do
         '                     chan,rising,start,end, thres, hysteresis, minwidth
         lastMarker% := ChanSearch(9,7,lastMarker%,view(spikefile%).MaxTime(),1.5,0,0.5);
