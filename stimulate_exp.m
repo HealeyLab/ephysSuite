@@ -1,10 +1,9 @@
 function [ success ] = stimulate_exp(isi, random, trials, isInRandMode, songbird_directory, GuiHandle, a)
 if ~exist('path_to_intan_data_folder', 'var')
     path_to_intan_data_folder = uigetdir('..'); % one level up
-    s = dir(fullfile(path_to_intan_data_folder, 'markers.txt'));
+    file = dir(fullfile(path_to_intan_data_folder, strcat(datestr(now), 'markers.txt')));
 end
     
-file;
 ps = findobj(GuiHandle, 'Tag', 'pS');
 ets = findobj(GuiHandle, 'Tag', 'elapsedTimeString');
 %% Stimulate the bird acoustically, send data via arduino to the intan board for duration of song.
@@ -12,7 +11,7 @@ ets = findobj(GuiHandle, 'Tag', 'elapsedTimeString');
 songs = dir(fullfile(songbird_directory, '*.wav')); % should already be sorted by insertion
 
 a.writeDigitalPin('D5', 1);% Intan analog input 7, digital 5, triggers.
-pause 1; % because intan likes to wait for one second latency.
+pause(1); % because intan likes to wait for one second latency.
 
 if isInRandMode
     for elem = 1:str2num(trials)
@@ -34,17 +33,11 @@ end
     function updatecount
         set(ets, 'String', strcat('elapsed time: ', num2str(toc)));
         set(ps, 'String', strcat('Of ', num2str(trials*numel(songs)), ' trials, trials done: ', num2str(elem*song+elem-1)));
-%         if song*elem > 1
-%             for i = 1:log10((elem*song+elem-1)*10) % total number of times
-%                 fprintf('\b') % deletes relevant things
-%             end
-%         end
-%         fprintf('%d', elem*song+elem)
     end
     function playprot
         %% load file, set filename
-        file=strcat(songs(song).folder, '/', songs(song).name);
-        [Y, Fs]=audioread(file);
+        songfile=strcat(songs(song).folder, '\', songs(song).name);
+        [Y, Fs]=audioread(songfile);
         player = audioplayer(Y, Fs);
         
         %% play
@@ -57,13 +50,12 @@ end
         clear Y Fs player
         
         %% pause
-        pausetime = str2double(isi)+rand*str2double(random) - toc; % This fixes a bug where I didn't account for length of song
+        pausetime = str2double(isi)+rand*str2double(random) - toc % This fixes a bug where I didn't account for length of song
         pause(pausetime) % isi plus or minus rand [0,1] times random
     end
     function dowrite
-        textfile = fullfile(file.folder, strcat(file.name, '_markers.txt'));
-        fid = fopen(textfile, 'w');
-        fprintf(fid, '%s', ##########);
+        fid = fopen(file, 'w');
+        fprintf(fid, '%s', 'B');
         fclose(fid);
     end
 clear all
