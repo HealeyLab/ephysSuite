@@ -4,10 +4,7 @@ clear all
 if ~exist('a', 'var') % if no a variable, instantiate it
     a = arduino;
 end
-%% TODOS:  
-% REGEX
-% 
-
+%% 
 % connected to analog input 7, indicates start of recording, triggers it.
 a.writeDigitalPin('D5', 1);
 while 1
@@ -38,7 +35,8 @@ while 1
     end
 end
     function dowrite
-        fid = fopen(file, 'w');
+%         txtfile = maketxt(
+        fid = fopen(txtfile, 'wt');
         fprintf(fid, '%s\n', in);
         fclose(fid);
     end

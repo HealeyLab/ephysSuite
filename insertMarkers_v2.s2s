@@ -1,0 +1,41 @@
+var spikefile%, textfile%, memChan%; '% means integer, $ is string
+var intanSamplingRate% := 20000;
+
+spikefile% := FileOpen("*.smr", 0, 0);      ' name, type, mode
+PrintLog("%s\n", View(spikefile%).MaxTime());
+memChan% := MemChan(8, 80);                 ' Create memory text channel
+'findsize = length of recording * sr
+
+textfile% := FileOpen("*_markers.txt", 1, 0);'text, read only 
+if (textfile% > 0) then
+    var currentmarker$, lastMarker% := 0;
+    'reads next line from file, overwrites currentmarker$
+    'We will iteratively chanSearch from here.'
+    while Read(currentmarker$) >= 0 do
+        '                     chan,rising,start,end, thres, hysteresis, minwidth
+        lastMarker% := ChanSearch(9,7,lastMarker%,view(spikefile%).MaxTime(),1.5,0,0.5);
+        doTxtMrk(currentmarker$, lastMarker);        
+    wend;
+    'close text file
+    view(textFile%);
+    FileClose();
+endif
+
+' Tidy up, save memory channel and close spike file
+view(spikefile%);                           'select the spike2 data file
+MemSave(memChan%, 32, 0, 1);                'Save text markers in channel 32, overwrite without query
+ChanDelete(memChan%);
+ChanShow(32);                               'need to actually show channel
+FileClose();
+halt;
+
+Func doTxtMrk(input$, time)
+var cd%[4];                                 'you need a code to be able to sort it later
+if input$ = "b" then cd%[0] := 1;endif
+if input$ = "t" then cd%[0] := 2;endif
+if input$ = "rb" then cd%[0] := 3;endif
+if input$ = "rt" then cd%[0] := 4;endif
+' chan, defers to next param, time,  code,  textmark
+view(spikefile%).MemSetItem(memChan%, 0, time, cd%[], input$);
+end
+

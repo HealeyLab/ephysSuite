@@ -1,17 +1,18 @@
 %% File Writer
 % regenerates the file every time
-% if ~exist('filename', 'var')
-%     filename = fullfile(uigetdir('..'), 'markers.txt'); % one level up
-%     fid = fopen(filename, 'w');
-% end
-% 
 
-[name, path] = uigetfile('*.wav');
-f = fullfile(path, name);
-[Y, Fs]=audioread(f);
-player = audioplayer(Y, Fs);
-playblocking(player) % so that it doesn't all play at once
+if ~exist('filename', 'var')
+    filename = fullfile(uigetdir('..'), 'markers.txt'); % one level up
+    fid = fopen(filename, 'wt');
+end
 
+
+%% testing audio capabilities
+% [name, path] = uigetfile('*.wav');
+% f = fullfile(path, name);
+% [Y, Fs]=audioread(f);
+% player = audioplayer(Y, Fs);
+% playblocking(player) % so that it doesn't all play at once
 
 %% PRINTER UPDATER
 % fprintf('\ncounts:  ')

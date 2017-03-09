@@ -1,11 +1,12 @@
 function [ success ] = stimulate_exp(isi, random, trials, isInRandMode, songbird_directory, GuiHandle, a)
 if ~exist('path_to_intan_data_folder', 'var')
     path_to_intan_data_folder = uigetdir('..'); % one level up
-    file = dir(fullfile(path_to_intan_data_folder, strcat(datestr(now), 'markers.txt')));
+    textfile = fullfile(path_to_intan_data_folder, strcat(datestr(now, 'mmddyyyyHHSS'), 'markers.txt'));
 end
-    
 ps = findobj(GuiHandle, 'Tag', 'pS');
 ets = findobj(GuiHandle, 'Tag', 'elapsedTimeString');
+fid = fopen(textfile, 'wt');%for dowrite    
+
 %% Stimulate the bird acoustically, send data via arduino to the intan board for duration of song.
 
 songs = dir(fullfile(songbird_directory, '*.wav')); % should already be sorted by insertion
@@ -16,7 +17,7 @@ pause(1); % because intan likes to wait for one second latency.
 if isInRandMode
     for elem = 1:str2num(trials)
         xi = randperm(numel(songs));
-        shuffledsongs = songs(xi).name; % shuffle songs
+        songs = songs(xi);%.name; % alternatuvely had it as shuffled
         for song = 1:numel(songs)
             playprot
             updatecount
@@ -50,14 +51,13 @@ end
         clear Y Fs player
         
         %% pause
-        pausetime = str2double(isi)+rand*str2double(random) - toc % This fixes a bug where I didn't account for length of song
+        pausetime = str2double(isi)+rand*str2double(random) - toc; % This fixes a bug where I didn't account for length of song
         pause(pausetime) % isi plus or minus rand [0,1] times random
     end
     function dowrite
-        fid = fopen(file, 'w');
-        fprintf(fid, '%s', 'B');
-        fclose(fid);
+        fprintf(fid, '%s', 'L');
     end
+fclose(fid);
 clear all
 fprintf('\ndone')
 
@@ -67,12 +67,7 @@ end
 
 
 
-
-
-
-
-
-% I have wav files that I want to play- I read them using wavread, and play them using sound or play(audioplayer).
+% have wav files that I want to play- I read them using wavread, and play them using sound or play(audioplayer).
 % my problem is that for this assignment precision is important, and some how my files are sound later then they should be-
 % all my files work this way- silence for x milliseconds ,and a strong noise for just a couple milliseconds afterwards.
 % but in my code, using both functions the sound comes too far behind the x milliseconds..
