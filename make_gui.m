@@ -5,7 +5,6 @@ function make_gui
         a = arduino;
     end
     
-    
     hs = addcomponents;
 
     function hs = addcomponents

@@ -6,6 +6,7 @@ if ~exist('a', 'var') % if no a variable, instantiate it
 end
 %% 
 % connected to analog input 7, indicates start of recording, triggers it.
+fid = fopen(txtfile, 'wt');
 a.writeDigitalPin('D5', 1);
 while 1
     in = input('which song?', 's');
@@ -28,6 +29,7 @@ while 1
             playprot
         case 'q'
             a.writeDigitalPin('D5', 0); % stops recording
+            fclose(fid);
             break;
         otherwise
             disp huh?
@@ -35,10 +37,7 @@ while 1
     end
 end
     function dowrite
-%         txtfile = maketxt(
-        fid = fopen(txtfile, 'wt');
         fprintf(fid, '%s\n', in);
-        fclose(fid);
     end
     function playprot
         %load file

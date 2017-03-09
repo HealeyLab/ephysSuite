@@ -55,7 +55,7 @@ end
         pause(pausetime) % isi plus or minus rand [0,1] times random
     end
     function dowrite
-        fprintf(fid, '%s', 'L');
+        fprintf(fid, '%s\n', 'L');
     end
 fclose(fid);
 clear all
