@@ -3,21 +3,23 @@ var intanSamplingRate% := 20000;
 
 spikefile% := FileOpen("*.smr", 0, 0);      ' name, type, mode
 PrintLog("%s\n", View(spikefile%).MaxTime());
-memChan% := MemChan(8, 80);                 ' Create memory text channel
+memChan% := MemChan(8, 500);                 ' Create memory text channel
 'findsize = length of recording * sr
 
-textfile% := FileOpen("*_markers.txt", 1, 0);'text, read only 
+textfile% := FileOpen("*markers.txt", 1, 0);'text, read only 
 if (textfile% > 0) then
-    var currentmarker$, lastMarker% := 0;
+    var txtmrk$, lastMarker% := 0.0, maxT% := view(spikefile%).MaxTime() - 1;
     'reads next line from file, overwrites currentmarker$
     'We will iteratively chanSearch from here.'
-    while Read(currentmarker$) >= 0 do
+    view(textfile%);
+    while Read(txtmrk$) >= 0 do
         '                     chan,rising,start,end, thres, hysteresis, minwidth
-        lastMarker% := ChanSearch(9,7,lastMarker%,view(spikefile%).MaxTime(),1.5,0,0.5);
-        doTxtMrk(currentmarker$, lastMarker);        
+        view(spikefile%);
+        lastMarker% := ChanSearch(9,7,lastMarker%,maxT%,1.5,0,0.5);
+        doTxtMrk(txtmrk$, lastMarker%);
+        view(textfile%);
     wend;
     'close text file
-    view(textFile%);
     FileClose();
 endif
 
