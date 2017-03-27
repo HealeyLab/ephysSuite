@@ -11,13 +11,20 @@ if (textfile% > 0) then
     var txtmrk$, lastMarker% := 0.0, maxT% := view(spikefile%).MaxTime() - 1;
     'reads next line from file, overwrites currentmarker$
     'We will iteratively chanSearch from here.'
-    view(textfile%);
+    
+    '                      chan,rising,start,end, thres, hysteresis, minwidth
+    view(spikefile%);lastMarker% := ChanSearch(1,7,lastMarker%,maxT%,1.5,0,0.5); 'gets timestamp FIRST
+    view(textfile%); Read(txtmrk$); doTxtMrk(txtmrk$, lastMarker%);        
     while Read(txtmrk$) >= 0 do
+        view(spikefile%);        
+        '                      chan,falling,start,      end,  thres, hysteresis, minwidth   
+        'lastMarker% := ChanSearch(1,8,      lastMarker%,maxT%,1.5,   0,          0) + 1;  'gets end of stim so we can search next one SECOND
+        
         '                     chan,rising,start,end, thres, hysteresis, minwidth
-        view(spikefile%);
-        lastMarker% := ChanSearch(9,7,lastMarker%,maxT%,1.5,0,0.5);
-        doTxtMrk(txtmrk$, lastMarker%);
-        view(textfile%);
+        lastMarker% := ChanSearch(1,7,lastMarker%,maxT%,1.5,0,0.5); 'gets next timestamp THIRD
+                                                                    'goes next to SECOND, IF there is a next txtmrk
+        view(textfile%);doTxtMrk(txtmrk$, lastMarker%);
+        lastMarker% := lastMarker% + 1;
     wend;
     'close text file
     FileClose();
@@ -28,7 +35,7 @@ view(spikefile%);                           'select the spike2 data file
 MemSave(memChan%, 32, 0, 1);                'Save text markers in channel 32, overwrite without query
 ChanDelete(memChan%);
 ChanShow(32);                               'need to actually show channel
-FileClose();
+'FileClose();
 halt;
 
 Func doTxtMrk(input$, time)
