@@ -8,23 +8,13 @@ memChan% := MemChan(8, 500);                 ' Create memory text channel
 
 textfile% := FileOpen("*markers.txt", 1, 0);'text, read only 
 if (textfile% > 0) then
-    var txtmrk$, lastMarker% := 0.0, maxT% := view(spikefile%).MaxTime() - 1;
+    var txtmrk$, lastMarker := 0.0, maxT := view(spikefile%).MaxTime() - 1;
     'reads next line from file, overwrites currentmarker$
-    'We will iteratively chanSearch from here.'
-    
-    '                      chan,rising,start,end, thres, hysteresis, minwidth
-    view(spikefile%);lastMarker% := ChanSearch(1,7,lastMarker%,maxT%,1.5,0,0.5); 'gets timestamp FIRST
-    view(textfile%); Read(txtmrk$); doTxtMrk(txtmrk$, lastMarker%);        
+    'We will iteratively chanSearch from here.        
     while Read(txtmrk$) >= 0 do
-        view(spikefile%);        
-        '                      chan,falling,start,      end,  thres, hysteresis, minwidth   
-        'lastMarker% := ChanSearch(1,8,      lastMarker%,maxT%,1.5,   0,          0) + 1;  'gets end of stim so we can search next one SECOND
-        
         '                     chan,rising,start,end, thres, hysteresis, minwidth
-        lastMarker% := ChanSearch(1,7,lastMarker%,maxT%,1.5,0,0.5); 'gets next timestamp THIRD
-                                                                    'goes next to SECOND, IF there is a next txtmrk
-        view(textfile%);doTxtMrk(txtmrk$, lastMarker%);
-        lastMarker% := lastMarker% + 1;
+        view(spikefile%);lastMarker := ChanSearch(1,7,lastMarker,maxT,1.5,0,0.5); 'gets next timestamp THIRD
+        view(textfile%);doTxtMrk(txtmrk$, lastMarker);
     wend;
     'close text file
     FileClose();
