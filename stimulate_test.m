@@ -6,6 +6,7 @@ if ~exist('a', 'var') % if no a variable, instantiate it
 end
 %% 
 % connected to analog input 7, indicates start of recording, triggers it.
+txtfile = 'C:\Users\Dell\Documents\MATLAB\Healey\test.txt';
 fid = fopen(txtfile, 'wt');
 a.writeDigitalPin('D5', 1);
 while 1
