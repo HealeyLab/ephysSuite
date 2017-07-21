@@ -1,7 +1,9 @@
 function [ success ] = stimulate_exp(isi, random, trials, isInRandMode, songbird_directory, GuiHandle, a)
 if ~exist('path_to_intan_data_folder', 'var')
     path_to_intan_data_folder = uigetdir('..'); % one level up
-    textfile = fullfile(path_to_intan_data_folder, strcat(datestr(now, 'mmddyyyyHHSS'), 'markers.txt'));
+    
+    %% we are going to make the name match the automatic timestamp as intan
+    textfile = fullfile(path_to_intan_data_folder, strcat(datestr(now, 'yymmdd_HHMMSS'), 'markers.txt'));
 end
 ps = findobj(GuiHandle, 'Tag', 'pS'); % progress stirng
 ets = findobj(GuiHandle, 'Tag', 'elapsedTimeString');
