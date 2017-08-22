@@ -1,10 +1,48 @@
+%% Arduino multithreading and servo tester
+% a = arduino(
+% ard=serial('COM15','BaudRate',9600);
+% clear a
+delete(instrfindall);
+com = 'COM15';
+my_s = serial('COM15','BaudRate',9600); % instrfind('Type', 'serial', 'Port', com, 'Tag', '');
+
+fopen(my_s); % initiate arduino communication
+ 
+
+fprintf(my_s,'%s',char('hi')); % send answer variable content to arduino
+
+fclose(my_s); % end communication with arduino
+clear instrfind
+
+
+%% didn't work
+% 
+% % Create a serial port object.
+% com = 'COM11';
+% my_s = instrfind('Type', 'serial', 'Port', com, 'Tag', '');
+% 
+% % Create the serial port object if it does not exist
+% % otherwise use the object that was found.
+% if isempty(my_s)
+%     my_s = serial(com);
+% else
+%     fclose(my_s);
+%     my_s = my_s(1)
+% end
+% 
+% my_s=serial('com11');
+% fopen(my_s);
+% query(my_s, 'abc');
+% fclose(my_s);
+% clear my_s;
+
 %% File Writer
 % regenerates the file every time
-
-if ~exist('filename', 'var')
-    filename = fullfile(uigetdir('..'), 'markers.txt'); % one level up
-    fid = fopen(filename, 'wt');
-end
+% 
+% if ~exist('filename', 'var')
+%     filename = fullfile(uigetdir('..'), 'markers.txt'); % one level up
+%     fid = fopen(filename, 'wt');
+% end
 
 
 %% testing audio capabilities

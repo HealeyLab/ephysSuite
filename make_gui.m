@@ -1,12 +1,12 @@
 function make_gui
-    %% NOTE: to go fast, toggle the fields with the TAB key.
+    % NOTE: to go fast, toggle the fields with the TAB key.
     % add components
+    cd 'C:\Users\Dell\Documents\MATLAB\ephysSuite';
     if ~exist('a', 'var') % if no a variable, instantiate it
-        a = arduino;
+        a = arduino('COM15','nano','Libraries','Servo');
     end
     
     hs = addcomponents;
-
     function hs = addcomponents
         hs.fig = figure('Visible', 'on', 'Tag', 'fig');
         % same line
