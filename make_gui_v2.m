@@ -6,12 +6,10 @@ function make_gui_v2
     %% connect to arduino
     delete(instrfindall);
     try 
-        com = 'COM11';
-        my_s = serial(com,'BaudRate',9600); % instrfind('Type', 'serial', 'Port', com, 'Tag', '');
+        my_s = serial('COM11','BaudRate',9600); % instrfind('Type', 'serial', 'Port', com, 'Tag', '');
         fopen(my_s); % initiate arduino communication
     catch 
-        com = 'COM15';
-        my_s = serial(com,'BaudRate',9600); % instrfind('Type', 'serial', 'Port', com, 'Tag', '');
+        my_s = serial('COM15','BaudRate',9600); % instrfind('Type', 'serial', 'Port', com, 'Tag', '');
         fopen(my_s); % initiate arduino communication
     end
         
@@ -96,7 +94,7 @@ function make_gui_v2
         isInRandMode = hs.randomOrNah.Value; % so default SHOULD BE random
         songbird_directory = hs.getSongDirectory.String;
         GuiHandle = ancestor(hObject, 'figure');
-        stimulate_exp(isi, random, trials, isInRandMode, songbird_directory, GuiHandle, my_s);     
+        stimulate_exp_v2(isi, random, trials, isInRandMode, songbird_directory, GuiHandle, my_s);     
     end
 
     function changeToggleText(hObject, ~)

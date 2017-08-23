@@ -9,27 +9,6 @@ pause(2);
 fwrite(my_s, matlabval, 'uint8');
 fclose(my_s); % end communication with arduino
 
-%% didn't work
-% 
-% % Create a serial port object.
-% com = 'COM11';
-% my_s = instrfind('Type', 'serial', 'Port', com, 'Tag', '');
-% 
-% % Create the serial port object if it does not exist
-% % otherwise use the object that was found.
-% if isempty(my_s)
-%     my_s = serial(com);
-% else
-%     fclose(my_s);
-%     my_s = my_s(1)
-% end
-% 
-% my_s=serial('com11');
-% fopen(my_s);
-% query(my_s, 'abc');
-% fclose(my_s);
-% clear my_s;
-
 %% File Writer
 % regenerates the file every time
 % 
