@@ -5,12 +5,18 @@ function make_gui_v2
 
     %% connect to arduino
     delete(instrfindall);
+    baud = 115200;
     try 
-        my_s = serial('COM11','BaudRate',9600); % instrfind('Type', 'serial', 'Port', com, 'Tag', '');
+        my_s = serial('COM19','BaudRate',baud); % instrfind('Type', 'serial', 'Port', com, 'Tag', '');
         fopen(my_s); % initiate arduino communication
     catch 
-        my_s = serial('COM15','BaudRate',9600); % instrfind('Type', 'serial', 'Port', com, 'Tag', '');
-        fopen(my_s); % initiate arduino communication
+        try
+            my_s = serial('COM15','BaudRate',baud); % instrfind('Type', 'serial', 'Port', com, 'Tag', '');
+            fopen(my_s); % initiate arduino communication
+        catch
+            my_s = serial('COM11','BaudRate',baud); % instrfind('Type', 'serial', 'Port', com, 'Tag', '');
+            fopen(my_s); % initiate arduino communication
+        end
     end
         
     
