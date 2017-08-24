@@ -1,7 +1,7 @@
 %% Arduino multithreading and servo tester
 delete(instrfindall);
 com = 'COM19';
-my_s = serial(com,'BaudRate',115200); % instrfind('Type', 'serial', 'Port', com, 'Tag', '');
+my_s = serial(com,'BaudRate',9600); % instrfind('Type', 'serial', 'Port', com, 'Tag', '');
 
 fopen(my_s); % initiate arduino communication
 matlabval = 8;

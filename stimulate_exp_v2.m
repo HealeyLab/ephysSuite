@@ -2,9 +2,9 @@ function [ success ] = stimulate_exp_v2(isi, random, trials, isInRandMode, songb
 
 %% Arduino Constants
 CHAN_8_HIGH = 8;
-CHAN_7_HIGH = 7;
+% CHAN_7_HIGH = 7;
 CHAN_8_LOW = 6;
-CHAN_7_LOW = 5;
+% CHAN_7_LOW = 5;
 send_to_sketch = @(matlabval) fwrite(my_s, matlabval, 'uint8');
 %%
 counter = 0;

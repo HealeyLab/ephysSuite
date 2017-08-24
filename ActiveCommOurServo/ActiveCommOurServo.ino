@@ -10,9 +10,8 @@
 
 #define SERVOPIN 10
 #define SPEED 20
-#define THRES 100
+#define THRES 60
 #define SETPOINT 512
-
 
 Servo myservo;  
 
@@ -22,13 +21,12 @@ int analogInPin = A0;
 int currSensorValue;        // current value read from hall
 int prevSensorValue;        // previoius read from hall
 
-
 void setup() {
   // initialize serial communications at 9600 bps:
   Serial.begin(9600); 
   //we attach the servo selectively throughout the script.
 }
-//NOTE: LOOP HAS RUNTHROUGH TIME OF ~.5 MILLISECONDS. THIS IS SOMEWHAT SIGNIFICANT.
+
 void loop() {  
   currSensorValue = analogRead(analogInPin);
   Serial.println(currSensorValue);      
