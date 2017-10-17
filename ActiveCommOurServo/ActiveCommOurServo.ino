@@ -9,8 +9,8 @@
 #include <Servo.h> 
 
 #define SERVOPIN 10
-#define SPEED 20
-#define THRES 60
+#define SPEED 35
+#define THRES 15
 #define SETPOINT 512
 
 Servo myservo;  
@@ -72,32 +72,5 @@ void turn(int going_left){
     currSensorValue = analogRead(analogInPin);
     prevSensorValue = currSensorValue;
   }
-  delay(500);
+  delay(750);
 }
-
-//  currSensorValue = analogRead(analogInPin);
-//  Serial.println(currSensorValue);      
-//  if(currSensorValue > SETPOINT + THRES){
-//    if(!myservo.attached()){myservo.attach(SERVOPIN);} // attach the servo, turn it on
-//
-//    // need to see if going right or left
-//    if(prevSensorValue > currSensorValue){
-//      myservo.write(RIGHT);
-//    }
-//    else{myservo.write(LEFT);}
-//  }
-//  else if(currSensorValue < SETPOINT - THRES){
-//    if(!myservo.attached()){myservo.attach(SERVOPIN);}   
-//
-//    // need to see if going right or left
-//    if(prevSensorValue > currSensorValue){
-//      myservo.write(RIGHT);
-//    }
-//    else{myservo.write(LEFT);}
-//  }
-//  else {myservo.detach();}
-//  delay(200);
-//  prevSensorValue = currSensorValue;
-//
-//
-
