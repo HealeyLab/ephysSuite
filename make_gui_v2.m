@@ -11,7 +11,7 @@ function make_gui_v2
         fopen(my_s); % initiate arduino communication
     catch 
         try
-            my_s = serial('COM15','BaudRate',baud); % instrfind('Type', 'serial', 'Port', com, 'Tag', '');
+            my_s = serial('COM10','BaudRate',baud); % instrfind('Type', 'serial', 'Port', com, 'Tag', '');
             fopen(my_s); % initiate arduino communication
         catch
             my_s = serial('COM11','BaudRate',baud); % instrfind('Type', 'serial', 'Port', com, 'Tag', '');
@@ -85,12 +85,17 @@ function make_gui_v2
             'Style', 'text',...
             'Position',[175 25 425 20],...
             'Tag', 'pS',...
-            'String','bobt');
+            'String','');
         hs.elapsedTimeString = uicontrol(hs.fig,...
             'Style', 'text',...
-            'Position',[175 50 425 20],...
+            'Position',[175 75 425 20],...
             'Tag', 'elapsedTimeString',...
             'String','Elapsed time');
+         hs.Stop = uicontrol(hs.fig,...
+            'Position', [175 50 425 20],...
+            'Style', 'text',...
+            'String', 'Stop',...
+            'Callback', @stop_exp);
     end
 
     function run(hObject, ~)
@@ -110,6 +115,14 @@ function make_gui_v2
             set(hObject, 'String', 'Habituate mode')
         end
     end
-
+    
+    function stop_exp(hObject, ~)
+        ps = findobj(GuiHandle, 'Tag', 'pS'); % progress stirng
+        ets = findobj(GuiHandle, 'Tag', 'elapsedTimeString');
+        set(ps, 'String', 'Stopped');
+        set(ets, 'String', ''); % make blank
+        fclose(my_s); % serial        
+        fclose all; % text
+    end
 
 end

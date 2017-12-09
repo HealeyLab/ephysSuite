@@ -7,43 +7,51 @@ if ~exist('path_to_intan_data_folder', 'var')
     textfile = fullfile(path_to_intan_data_folder, strcat(datestr(now, 'yymmdd_HHMMSS'), 'markers.txt'));
 end
 
-ps = findobj(GuiHandle, 'Tag', 'pS'); % progress stirng
+ps = findobj(GuiHandle, 'Tag', 'pS'); % progress string
 ets = findobj(GuiHandle, 'Tag', 'elapsedTimeString');
 fid = fopen(textfile, 'wt'); % for dowrite    
 
-%% Stimulate the bird acoustically, send data via arduino to the intan board for duration of song.
+%% Stimulate acoustically, send data via arduino to the intan board for duration of song.
 
 songs = dir(fullfile(songbird_directory, '*.wav')); % should already be sorted by insertion
-
+counter = 0;
 a.writeDigitalPin('D5', 1);% Intan analog input 7, digital 5, triggers.
 pause(1); % because intan likes to wait for one second latency.
-
-if isInRandMode
-    for elem = 1:str2num(trials)
-        xi = randperm(numel(songs));
-        songs = songs(xi);%.name; % alternatuvely had it as shuffled
-        for song = 1:numel(songs)
-            playprot
-            updatecount
+try
+    if isInRandMode
+        for elem = 1:str2num(trials)
+            xi = randperm(numel(songs));
+            songs = songs(xi);%.name; % alternatuvely had it as shuffled
+            for song = 1:numel(songs)
+                playprot(songs, song, a)
+                updatecount(counter, trials, songs, ets, ps)
+            end
+        end
+    else
+        for song = 1:numel(songs) % Habituation protocol
+            for elem = 1:str2num(trials)
+                playprot(songs, song, a)
+                updatecount(counter, trials, songs, ets, ps)
+            end
         end
     end
-else
-    for song = 1:numel(songs) % Habituation protocol
-       for elem = 1:str2num(trials)
-           playprot
-           updatecount
-       end
-    end
+catch ME
+    close('all')
+    fprintf('\nterminated\n')
+    success = 0;
+    clear all
+    return;
 end
-    counter = 0;
-    function updatecount
+
+%% helper functions
+    function updatecount(counter, trials, songs, ets, ps)
         % elapsed time string
         set(ets, 'String', strcat('elapsed time: ', num2str(toc)));
         counter = counter + 1;
         % progress stirng
-        set(ps, 'String', strcat('Of ', num2str(trials*numel(songs)), ' trials, trials done: ', num2str(counter)));
+        set(ps, 'String', strcat('Of', num2str(trials*numel(songs)), 'trials, trials done:', num2str(counter)));
     end
-    function playprot
+    function playprot(songs, song, a)
         %% load file, set filename
         songfile=strcat(songs(song).folder, '\', songs(song).name);
         [Y, Fs]=audioread(songfile);
@@ -54,7 +62,7 @@ end
         tic % start counting
         playblocking(player) % so that it doesn't all play at once
         a.writeDigitalPin('D6', 0) % Once playback done, Arduino off
-        dowrite % note down in our textfile what stim that was
+        dowrite(fid) % note down in our textfile what stim that was
         %% cleanup
         clear Y Fs player
         
@@ -62,13 +70,14 @@ end
         pausetime = str2double(isi)+rand*str2double(random) - toc; % This fixes a bug where I didn't account for length of song
         pause(pausetime) % isi plus or minus rand [0,1] times random
     end
-    function dowrite
+    function dowrite(fid)
         fprintf(fid, '%s\n', 'L');
     end
+
+%% cleaning up
 fclose(fid);
 clear all
 fprintf('\ndone')
-
 success = 1;
 return;
 end

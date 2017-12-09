@@ -44,14 +44,14 @@ else
        end
     end
 end
-
     
     function updatecount
         % elapsed time string
         set(ets, 'String', strcat('elapsed time: ', num2str(toc)));
         counter = counter + 1;
         % progress stirng
-        set(ps, 'String', strcat('Of ', num2str(trials*numel(songs)), ' trials, trials done: ', num2str(counter)));
+        input_text = strcat('Of ', num2str(trials*numel(songs)), ' stims, ', num2str(counter), 'trials done.');
+        set(ps, 'String', input_text);
     end
 
     %%
