@@ -14,7 +14,6 @@ fid = fopen(textfile, 'wt'); % for dowrite
 %% Stimulate acoustically, send data via arduino to the intan board for duration of song.
 
 songs = dir(fullfile(songbird_directory, '*.wav')); % should already be sorted by insertion
-counter = 0;
 a.writeDigitalPin('D5', 1);% Intan analog input 7, digital 5, triggers.
 pause(1); % because intan likes to wait for one second latency.
 try
@@ -23,15 +22,15 @@ try
             xi = randperm(numel(songs));
             songs = songs(xi);%.name; % alternatuvely had it as shuffled
             for song = 1:numel(songs)
+                updatecount(elem, trials, songs, ets, ps)
                 playprot(songs, song, a)
-                updatecount(counter, trials, songs, ets, ps)
             end
         end
     else
         for song = 1:numel(songs) % Habituation protocol
             for elem = 1:str2num(trials)
+                updatecount(elem, trials, songs, ets, ps)
                 playprot(songs, song, a)
-                updatecount(counter, trials, songs, ets, ps)
             end
         end
     end
@@ -44,29 +43,29 @@ catch ME
 end
 
 %% helper functions
-    function updatecount(counter, trials, songs, ets, ps)
+% note: elem is a number
+    function updatecount(elem, trials, songs, ets, ps)
         % elapsed time string
         set(ets, 'String', strcat('elapsed time: ', num2str(toc)));
-        counter = counter + 1;
-        % progress stirng
-        set(ps, 'String', strcat('Of', num2str(trials*numel(songs)), 'trials, trials done:', num2str(counter)));
+        % progress string
+        set(ps, 'String', strcat(num2str(elem), 'of', num2str(str2double(trials)*numel(songs))));
     end
     function playprot(songs, song, a)
-        %% load file, set filename
+        % load file, set filename
         songfile=strcat(songs(song).folder, '\', songs(song).name);
         [Y, Fs]=audioread(songfile);
         player = audioplayer(Y, Fs);
         
-        %% play
+        % play
         a.writeDigitalPin('D6', 1) % Arduino on for duration of playback
         tic % start counting
         playblocking(player) % so that it doesn't all play at once
         a.writeDigitalPin('D6', 0) % Once playback done, Arduino off
         dowrite(fid) % note down in our textfile what stim that was
-        %% cleanup
+        % cleanup
         clear Y Fs player
         
-        %% pause
+        % pause
         pausetime = str2double(isi)+rand*str2double(random) - toc; % This fixes a bug where I didn't account for length of song
         pause(pausetime) % isi plus or minus rand [0,1] times random
     end
