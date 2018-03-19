@@ -17,6 +17,7 @@ songs = dir(fullfile(songbird_directory, '*.wav')); % should already be sorted b
 a.writeDigitalPin('D5', 1);% Intan analog input 7, digital 5, triggers.
 pause(1); % because intan likes to wait for one second latency.
 try
+    tic
     if isInRandMode
         for elem = 1:str2num(trials)
             xi = randperm(numel(songs));
@@ -35,20 +36,20 @@ try
         end
     end
 catch ME
-    close('all')
-    fprintf('\nterminated\n')
-    success = 0;
-    clear all
+    ME
+    clean_up(0);
     return;
 end
-
+%% cleaning up
+clean_up(1);
+return;
 %% helper functions
 % note: elem is a number
     function updatecount(elem, trials, songs, ets, ps)
+        % progress string
+        set(ps, 'String', strcat(num2str(elem), 'of', trials));
         % elapsed time string
         set(ets, 'String', strcat('elapsed time: ', num2str(toc)));
-        % progress string
-        set(ps, 'String', strcat(num2str(elem), 'of', num2str(str2double(trials)*numel(songs))));
     end
     function playprot(songs, song, a)
         % load file, set filename
@@ -61,7 +62,7 @@ end
         tic % start counting
         playblocking(player) % so that it doesn't all play at once
         a.writeDigitalPin('D6', 0) % Once playback done, Arduino off
-        dowrite(fid) % note down in our textfile what stim that was
+        dowrite(fid, songfile) % note down in our textfile what stim that was
         % cleanup
         clear Y Fs player
         
@@ -69,14 +70,14 @@ end
         pausetime = str2double(isi)+rand*str2double(random) - toc; % This fixes a bug where I didn't account for length of song
         pause(pausetime) % isi plus or minus rand [0,1] times random
     end
-    function dowrite(fid)
-        fprintf(fid, '%s\n', 'L');
+    function dowrite(fid, songfile)
+        fprintf(fid, '%s\n', songfile);
     end
-
-%% cleaning up
-fclose(fid);
-clear all
-fprintf('\ndone')
-success = 1;
-return;
+    function clean_up(succeeded)
+        fclose(fid);
+        a.writeDigitalPin('D5', 0);% Intan analog input 7, digital 5, triggers.
+        fprintf('\ndone\n')
+        success = succeeded;
+        clear all
+    end
 end
