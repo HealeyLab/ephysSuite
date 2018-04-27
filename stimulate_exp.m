@@ -1,5 +1,5 @@
 function [ success ] = stimulate_exp(isi, random, trials, isInRandMode, songbird_directory, GuiHandle, a)
-
+%%
 if ~exist('path_to_intan_data_folder', 'var')
     path_to_intan_data_folder = uigetdir('..', 'path to intan data folder'); % one level up
     
