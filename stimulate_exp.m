@@ -2,15 +2,19 @@ function [ success ] = stimulate_exp(isi, random, trials, isInRandMode, songbird
 %%
 if ~exist('path_to_intan_data_folder', 'var')
     path_to_intan_data_folder = uigetdir('..', 'path to intan data folder'); % one level up
-    
-    % we are going to make the name match the automatic timestamp as intan
-    textfile = fullfile(path_to_intan_data_folder, strcat(datestr(now, 'yymmdd_HHMMSS'), 'markers.txt'));
 end
+
+% we are going to make the name match the automatic timestamp as intan
+textfile = fullfile(path_to_intan_data_folder,...
+    strcat(datestr(now, 'yymmdd_HHMMSS'), 'markers.txt'));
+stimtime = fullfile(path_to_intan_data_folder,...
+    strcat(datestr(now, 'yymmdd_HHMMSS'), 'stimtime.txt'));
+
 
 ps = findobj(GuiHandle, 'Tag', 'pS'); % progress string
 ets = findobj(GuiHandle, 'Tag', 'elapsedTimeString');
-fid = fopen(textfile, 'wt'); % for dowrite    
-
+textfile_fid = fopen(textfile, 'wt'); % for dowrite    
+stimtime_fid = fopen(stimtime, 'wt');
 %% Stimulate acoustically, send data via arduino to the intan board for duration of song.
 
 songs = dir(fullfile(songbird_directory, '*.wav')); % should already be sorted by insertion
@@ -40,9 +44,11 @@ catch ME
     clean_up(0);
     return;
 end
+
 %% cleaning up
 clean_up(1);
 return;
+
 %% helper functions
 % note: elem is a number
     function updatecount(elem, trials, songs, ets, ps)
@@ -62,7 +68,9 @@ return;
         tic % start counting
         playblocking(player) % so that it doesn't all play at once
         a.writeDigitalPin('D6', 0) % Once playback done, Arduino off
-        dowrite(fid, songfile) % note down in our textfile what stim that was
+        fprintf(textfile_fid, '%s\n', songfile); % write to file
+        fprintf(stimtime_fid, '%s\n',...
+            datestr(now, 'yymmdd_HHMMSS')); % can comepare to name of file
         % cleanup
         clear Y Fs player
         
@@ -70,11 +78,10 @@ return;
         pausetime = str2double(isi)+rand*str2double(random) - toc; % This fixes a bug where I didn't account for length of song
         pause(pausetime) % isi plus or minus rand [0,1] times random
     end
-    function dowrite(fid, songfile)
-        fprintf(fid, '%s\n', songfile);
-    end
+
     function clean_up(succeeded)
-        fclose(fid);
+        fclose(textfile_fid);
+        fclose(stimtime_fid);
         a.writeDigitalPin('D5', 0);% Intan analog input 7, digital 5, triggers.
         fprintf('\ndone\n')
         success = succeeded;
