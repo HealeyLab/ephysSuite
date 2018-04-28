@@ -76,6 +76,9 @@ return;
         
         % pause
         pausetime = str2double(isi)+rand*str2double(random) - toc; % This fixes a bug where I didn't account for length of song
+        if pausetime < 3
+            pausetime = 3; % inter stim interval can't be less than 3
+        end
         pause(pausetime) % isi plus or minus rand [0,1] times random
     end
 
