@@ -1,7 +1,7 @@
 function make_gui_v2
     % NOTE: to go fast, toggle the fields with the TAB key.
     % add components
-    cd 'C:\Users\Dell\Documents\MATLAB\ephysSuite';
+    cd 'C:\Users\danpo\Documents\MATLAB\ephysSuite';
 
     %% connect to arduino
     delete(instrfindall);

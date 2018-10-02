@@ -10,7 +10,7 @@
 
 #define SERVOPIN 10
 #define SPEED 35
-#define THRES 15
+#define THRES 20
 #define SETPOINT 512
 
 Servo myservo;  
@@ -34,9 +34,11 @@ void loop() {
   if(currSensorValue > SETPOINT + THRES){
     if(!myservo.attached()){myservo.attach(SERVOPIN);} // attach the servo, turn it on
     turn(-1);
+//    Serial.println("left");
   } else if(currSensorValue < SETPOINT - THRES){
     if(!myservo.attached()){myservo.attach(SERVOPIN);}   
     turn(1);
+//    Serial.println("right");
   } else {
     myservo.detach();
   }
@@ -72,5 +74,5 @@ void turn(int going_left){
     currSensorValue = analogRead(analogInPin);
     prevSensorValue = currSensorValue;
   }
-  delay(750);
+  delay(500);
 }
