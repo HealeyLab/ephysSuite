@@ -61,7 +61,19 @@ return;
         % load file, set filename
         songfile=strcat(songs(song).folder, '\', songs(song).name);
         [Y, Fs]=audioread(songfile);
-        player = audioplayer(Y, Fs);
+        % in case is stereo, convert to single channel
+        Y = Y(:,1);
+        % fade the Y variable in and out
+        fade_win = ceil(Fs * 0.400);
+        beginning = Y(1:fade_win);
+        beginning = beginning .* [0:1/(length(beginning)-1):1]';
+        middle = Y(fade_win+1:end-fade_win);
+        last = Y(end-(fade_win+1):end);
+        last = last .* [1:-1/(length(last)-1):0]';
+        Y_fade = [beginning; middle; last];
+        
+        % make player
+        player = audioplayer(Y_fade, Fs);
         
         % play
         a.writeDigitalPin('D6', 1) % Arduino on for duration of playback
