@@ -46,7 +46,7 @@ function make_gui
         hs.getSongDirectory = uicontrol(hs.fig,...
             'Style', 'Edit',...
             'Position', [50 75 300 20],...
-            'String', 'C:\Users\danpo\Documents\MATLAB\ephysSuite\zf son mdy');
+            'String', 'C:\Users\danpo\Documents\MATLAB\ephysSuite\zf son mda');
 
         % Habituate?
         hs.randomOrNah = uicontrol(hs.fig,...
@@ -85,6 +85,7 @@ function make_gui
         songbird_directory = hs.getSongDirectory.String;
         GuiHandle = ancestor(hObject, 'figure');
         stimulate_exp(isi, random, trials, isInRandMode, songbird_directory, GuiHandle, a);     
+        pushBulletDriver('done with song trial');
     end
 
     function changeToggleText(hObject, ~)
