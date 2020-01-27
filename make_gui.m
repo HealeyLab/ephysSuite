@@ -46,7 +46,7 @@ function make_gui
         hs.getSongDirectory = uicontrol(hs.fig,...
             'Style', 'Edit',...
             'Position', [50 75 300 20],...
-            'String', 'C:\Users\danpo\Documents\MATLAB\ephysSuite\zf son mda');
+            'String', 'C:\Users\danpo\Documents\MATLAB\ephysSuite\zf son mdj');
 
         % Habituate?
         hs.randomOrNah = uicontrol(hs.fig,...
@@ -95,6 +95,4 @@ function make_gui
             set(hObject, 'String', 'Habituate mode')
         end
     end
-
-
 end
